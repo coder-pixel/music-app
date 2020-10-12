@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working Music Player App 🎵 in HTML CSS & JavaScript</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+        integrity="sha512-PgQMlq+nqFLV4ylk1gwUOgm6CtIIXkKwaIHp/PAIWHzig/lKZSEGKEysh0TCVbHJXCLN7WetD8TFecIky75ZfQ=="
+        crossorigin="anonymous" />
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 62.5%;
+            /* 100% == 16px, so 62.5% == 10px*/
+            font-family: cursive;
+        }
+
+        .main_div {
+            width: 100vw;
+            height: 100vh;
+            background-color: #f6f6f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .music_container {
+            width: 35rem;
+            /*350px*/
+            height: 55rem;
+            /*550px*/
+            background-color: #fff;
+            border-radius: 2rem;
+            box-shadow: 0 1.2rem 3rem 0.5rem rgba(0, 0, 0, .2);
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .music_container #title {
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            word-spacing: 0.5rem;
+            color: #171717;
+            margin: 2rem 0 .5rem 0;
+            font-size: 2.5rem;
+            font-weight: 500;
+            text-shadow: 0 .3rem .5rem rgba(0, 0, 0, 0.3);
+        }
+
+        .music_container #artist {
+            color: #cccaca;
+            text-transform: capitalize;
+            letter-spacing: .1rem;
+            font-size: 2rem;
+            margin-bottom: 4rem;
+            font-weight: 300;
+        }
+
+        .img_container {
+            width: 25rem;
+            height: 25rem;
+            margin: auto;
+            border: 1px solid;
+            border-radius: 50%;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* object-fit: cover; */
+            box-shadow: 0 1.2em 3rem .5rem rgba(0, 0, 0, .4);
+        }
+
+        /* controls style */
+        .music_controls {
+            width: 20rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5rem auto 0;
+        }
+
+        .music_controls .fas {
+            color: #000;
+            font-size: 2rem;
+            cursor: pointer;
+            filter: drop-shadow(0 1.2rem 3rem 0.5rem rgba(0, 0, 0, 0.4));
+        }
+
+        .music_controls .fas:hover {
+            color: grey;
+        }
+
+        .music_controls .main_button {
+            width: 5rem;
+            height: 5rem;
+            border-radius: 50%;
+            background: #111;
+            color: #f6f6f6;
+            font-size: 1.4rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .music_controls .fa-play:hover {
+            background: #f6f6f6;
+            color: #111;
+            box-shadow: 0 1rem 2rem .2rem rgba(0, 0, 0, .4);
+        }
+
+        /* add anime class to animate */
+        .anime {
+            animation: rotatePlayer 5s linear infinite forwards;
+        }
+
+        @keyframes rotatePlayer {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+
+        /* part 2 of video */
+        /* progress style */
+        .progressbar_container{
+            width: 100%;
+            height: auto;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .progress_div{
+            width: 100%;
+            height: 0.5rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.07),
+                        0 4px 8px rgba(0,0,0,.07), 0 8px 16px rgba(0,0,0,.07),
+                        0 16px 32px rgba(0,0,0,.07), 0 32px 64px rgba(0,0,0,.07) ;
+            border-radius: 4rem;
+            position: relative;
+            margin-top: .5rem;
+            transition: all 1s linear;
+            -moz-transition: all 1s linear;
+            -o-transition: all 1s linear;
+            -webkit-transition: all 1s linear;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .progress{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background-color: black;
+            border-radius: 4rem;
+            /* margin-top: .5rem; */
+            transition: width 1s linear;
+            -moz-transition: width 1s linear;
+            -o-transition: width 1s linear;
+            -webkit-transition: width 1s linear;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;       
+        }
+        .progress::after{
+            content: "";
+            width: 6px;
+            height: 120%;
+            background-color: #000;
+            position: absolute;
+            right: 0;
+            top: -5%;
+            border-radius: 50%;
+        }
+
+        .progress_duration_meter{
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main_div">
+        <dic class="music_container">
+            <h2 id="title">Lotus lane</h2>
+            <h3 id="artist">The loyalist</h3>
+
+            <!-- image -->
+            <div class="img_container">
+                <img src="images/thapa-1.jpg" alt="">
+            </div>
+            <!-- <audio src="music/thapa-1.mp3" controls></audio> -->
+            <audio src="music/thapa-1.mp3"></audio>
+
+            <!-- Progress bar -->
+            <div class="progressbar_container" id="progress_container">
+                <div class="progress_duration_meter">
+                    <div id="current_time">00:00</div>
+                    <div id="duration">02:44</div>
+                </div>
+
+                <div class="progress_div" id="progress_div">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
+
+            <!-- controls -->
+            <div class="music_controls">
+                <i class="fas fa-backward" id="prev" title="Previous"></i>
+                <i class="fas fa-play main_button" id="play" title="Play"></i>
+                <i class="fas fa-forward" id="next" title="Next"></i>
+            </div>
+        </dic>
+    </div>
+
+
+    <script>
+        const music = document.querySelector("audio");
+        const img = document.querySelector("img");
+        const play = document.getElementById("play");
+
+        const artist = document.getElementById("artist");
+        const title = document.getElementById("title");
+        const prev = document.getElementById("prev");
+        const next = document.getElementById("next");
+        
+        let progress = document.getElementById("progress");
+        
+        let song_current_time = document.getElementById("current_time");
+        const song_duration = document.getElementById("duration");
+
+        const progress_div = document.getElementById("progress_div");
+
+        const songs = [{
+            name: "thapa-1",
+            title: "Love Story",
+            artist: "Taylor Swift",
+        },
+        {
+            name: "thapa-2",
+            title: "All We Know",
+            artist: "The Chainsmokers",
+        },
+        {
+            name: "thapa-3",
+            title: "Monster",
+            artist: "Eminem ft. Rihanna",
+        },
+        ]
+
+        let isPlaying = false;
+
+        // for play and pause functunality
+        const playMusic = function () {
+            music.play();
+            play.classList.replace("fa-play", "fa-pause");
+            img.classList.add("anime");
+            isPlaying = true;
+        }
+        const stopMusic = function () {
+            music.pause();
+            play.classList.replace("fa-pause", "fa-play");
+            img.classList.remove("anime");
+            isPlaying = false;
+
+        }
+
+        play.addEventListener("click", () => {
+            if(!isPlaying){
+                playMusic();
+            }
+            else{
+                stopMusic();
+            }
+        });
+
+
+
+        // changing music data
+        const loadSong = (songs) => {
+            title.textContent = songs.title;
+            artist.textContent = songs.artist;
+            music.src = "music/" + songs.name + ".mp3";
+            img.src = "images/" + songs.name + ".jpg"
+        }
+
+        // loadSong(songs[1]);
+
+        let songIndex = 0;
+
+        const nextSong = () => {
+            // if(songIndex < 2){
+            //     songIndex++;
+            // }
+            // else{
+            //     songIndex = 0;
+            // }
+            // loadSong(songs[songIndex]);  
+
+
+            // easy way of doing the above work and it's universal also
+            songIndex = (songIndex + 1) % songs.length;
+            loadSong(songs[songIndex]);
+            playMusic();
+        }
+
+        const prevSong = () => {
+            // if(songIndex !== 0){
+            //     songIndex--;
+            // }
+            // else if(songIndex === 0){
+            //     songIndex = 2;
+            // }
+            // loadSong(songs[songIndex]); 
+
+
+
+            // easy way of doing the above work and it's universal also
+            songIndex = (songIndex - 1 + songs.length) % songs.length;
+            loadSong(songs[songIndex]);
+            playMusic();
+        }
+
+        // progress functunality
+        music.addEventListener("timeupdate" , (event) => {
+            // let currentTime = Math.floor(event.srcElement.currentTime);
+            // console.log(Math.floor(event.srcElement.currentTime));
+            let {currentTime, duration} = event.srcElement;         //object destructuring
+            // console.log(currentTime);
+            
+
+            song_current_time.textContent= currentTime;
+            song_duration.textContent = duration;
+           
+            //progressbar update
+            let progress_time = (currentTime / duration) * 100;
+            progress.style.width = `${progress_time}%`;
+
+
+            // music duration update
+            let min_duration = Math.floor(duration / 60);
+            let sec_duration = Math.floor(duration % 60);
+            let tot_duration = `${min_duration}:${sec_duration}`;
+            // console.log(`min: ${min_duration}, sec: ${sec_duration}`)
+            if(duration){
+                song_duration.textContent = `${tot_duration}`;
+            }
+
+            // current duration update
+            let min_currentTime = Math.floor(currentTime / 60);
+            let sec_currentTime = Math.floor(currentTime % 60);
+            // console.log(`min: ${min_duration}, sec: ${sec_duration}`)
+
+            if(sec_currentTime < 10){
+                sec_currentTime = `0${sec_currentTime}`;
+            }
+            if(min_currentTime < 10){
+                min_currentTime = `0${min_currentTime}`;
+            }
+            let tot_currentTime = `${min_currentTime}:${sec_currentTime}`;
+
+            song_current_time.textContent = `${tot_currentTime}`;
+        });
+
+
+        // play music from anywhere
+        progress_div.addEventListener("click" , (event) => {
+            // console.log(event);
+            const {currentTime , duration} = music;
+            let move_progress = (event.offsetX / event.srcElement.clientWidth) * duration;
+            console.log(move_progress);
+
+            music.currentTime = move_progress;
+        })  
+
+        // autoplay
+        music.addEventListener("ended", nextSong);   
+
+        next.addEventListener("click", nextSong);
+        prev.addEventListener("click", prevSong);
+    </script>
+
+</body>
+
+</html>
